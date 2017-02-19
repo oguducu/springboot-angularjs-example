@@ -1,0 +1,14 @@
+{
+  "name": "DynamicUserPage",
+  "version": "0.0.1",
+  "description": "Sample Spring MVC | AngularJs project",
+  "scripts": {
+    "postinstall": "bower install"
+  },
+  "authors": [
+        "orcunguducu@hotmail.com"
+  ],
+  "dependencies": {
+    "bower": "latest"
+  }
+}

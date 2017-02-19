@@ -1,0 +1,38 @@
+
+
+div[draggable-widget] {
+  width: 100%;
+  float: left;
+  margin: 10px 10px 0 0; 
+}
+.widgetStyle{
+  width: 100%;
+  border-radius: 10px;
+  background-color:white;
+  padding:6px 10px 20px 10px;
+  min-height:100px;
+  
+}
+@media (min-width: 768px) {
+	div[draggable-widget].live {
+	  	width:97%;height:100px;
+	}
+	div[draggable-widget].last {
+	  width:48%;height:330px; 
+	}
+	div[draggable-widget].historical {
+	  width:48%;height:330px; 
+	}
+}
+div[drag-group] {
+	width:100%;
+}
+div[draggable-widget-handle] {
+  height:30px;
+  cursor: move;
+  position: absolute;
+  width:24%;
+}
+div[draggable-widget-handle].innerlive{
+  width:48%;
+}

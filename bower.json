@@ -1,0 +1,16 @@
+{
+    "name": "DynamicUserPage - MyFin",
+    "version": "1.0",
+    "authors": [
+        "orcunguducu@hotmail.com"
+    ],
+    "description": "Sample Spring MVC | AngularJs project",
+    "dependencies": {
+        "angular": "1.4.5",
+        "angular-animate": "1.4.5",
+        "angular-cookies": "1.4.5",
+        "bootstrap": "3.3.6",
+        "bootstrap-datepicker": "1.6.4",
+        "jquery": "1.12.4"
+    }
+}

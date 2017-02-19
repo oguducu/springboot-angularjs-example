@@ -1,0 +1,5 @@
+--- 
+jdk: 
+  - oraclejdk8
+language: java
+script: ./mvnw clean verify -Dmaven.test.skip=true

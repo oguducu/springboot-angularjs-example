@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html ng-app="mainModule">
+	<head>
+		<title>DynamicUserPage Login Page</title>
+		<script type="text/javascript"
+			src="app/resources/bower_components/angular/angular.min.js"></script>
+		<script type="text/javascript"
+			src="app/resources/bower_components/jquery/dist/jquery.min.js"></script>
+		<script type="text/javascript"
+			src="app/resources/bower_components/angular-cookies/angular-cookies.min.js"></script>
+		<script type="text/javascript"
+			src="app/resources/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+		<script type="text/javascript"
+			src="app/resources/js/ng-draggable-widgets.js"></script>
+		<script type="text/javascript"
+			src="app/resources/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+		<script type="text/javascript" src="app/app.js"></script>
+		<script type="text/javascript" src="app/services/parameterService.js"></script>
+		<script type="text/javascript" src="app/services/authenticationService.js"></script>
+		<script type="text/javascript" src="app/controller/signInSignUpCtrl.js"></script>
+		<script type="text/javascript" src="app/resources/js/ng-draggable-widgets.js"></script>
+		
+		<link rel="stylesheet"
+			href="app/resources/bower_components/bootstrap/dist/css/bootstrap.min.css">
+		<link rel="stylesheet" href="/app/resources/css/main.css">
+		<link rel="stylesheet"
+			href="app/resources/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
+				
+		<link rel="stylesheet" href="app/resources/css/main.css">
+	</head>
+	<style>
+		input[readonly]
+		{
+		    background-color:white !important;
+		}
+	</style>
+	<body ng-controller="SignInSignUpCtrl" ng-show="!currentUser || currentUser!=''">
+		<div class="globalMessagePopUp" ng-show="globalMessage!=''" ng-animate="'fade'">{{globalMessage}}</div>
+		<div class="col-md-4" style="margin: auto; position: absolute;top: 50px; left: 0; right: 0;">
+			<!-- Sign In -->
+			<div class="panel panel-primary" ng-if="signIn">
+			  <div class="panel-heading">Login</div>
+			  <div class="panel-body">
+			  	<form name="userForm" novalidate ng-submit="userForm.$valid">
+			  		<fieldset ng-disabled="isLoading">
+					  	<div class="input-group">
+						  <span class="input-group-addon" id="basic-addon1"><i class="glyphicon glyphicon-user"></i></span>
+						  <input type="email" ng-model="user.username" class="form-control" placeholder="Email" name="username" aria-describedby="basic-addon1" required>
+						</div>
+						<div ng-show="userForm.$submitted" >
+					      <span ng-show="userForm.username.$error.required" class="label label-danger">Email is mandatory</span>
+					      <span ng-show="userForm.username.$error.email" class="label label-danger">Email format is wrong</span>
+						</div>
+						<br>
+						<div class="input-group">
+						  <span class="input-group-addon" id="basic-addon1"><i class="glyphicon glyphicon-lock"></i></span>
+						  <input type="password" ng-model="user.password" class="form-control" placeholder="Password" aria-describedby="basic-addon1" name="password" ng-minlength="5" ng-maxlength="20" required>
+						</div>
+						<div ng-show="userForm.$submitted" >
+					      <span ng-show="userForm.password.$error.required" class="label label-danger">Password is mandatory</span>
+					      <span ng-show="userForm.password.$error.minlength" class="label label-danger">Password is too short. Min length is 5!</span>
+					      <span ng-show="userForm.password.$error.maxlength" class="label label-danger">Password is too long. Max length is 20!</span>
+						</div>
+						<br>
+						<div class="row">
+					  	  <div class="col-sm-6">
+							<div ng-show="isLoading" class='uil-ring-css pull-right'></div>
+						  </div>
+						  <div class="col-sm-6">
+							<button type="submit" ng-click="login(userForm,user)" name="login" class="btn btn-default pull-right">Sign In</button>
+						  </div>
+						</div>
+					</fieldset>
+				</form>
+			  </div>
+			</div>
+			<div class="panel panel-default" ng-if="signIn">
+			  <div class="panel-heading">Don't have an account?</div>
+			  <div class="panel-body">
+			    <button type="button" ng-click="openCloseSignIn(false)" class="btn btn-default pull-right">Create an Account</button>
+			  </div>
+			</div>
+			<!-- Sign Up -->
+			<div class="panel panel-primary" ng-show="!signIn">
+			  <div class="panel-heading">Sign Up</div>
+			  <div class="panel-body">
+			  	<form name="signUpForm" novalidate ng-submit="signUpForm.$valid">
+			  		<fieldset ng-disabled="isLoading">
+				  		<div style="margin-bottom:5px;">
+					  		<h5><b>First Name / Last Name <span class="redLabel">*</span></b></h5>
+					  	</div>
+					  	<div class="row">
+					  	  <div class="col-sm-6">
+				  	  		<div class="input-group">
+					  	  		<span class="input-group-addon" id="basic-addon1"></span>
+						  		<input type="text" ng-model="user.firstName" class="form-control" placeholder="First Name" name="firstName" aria-describedby="basic-addon1" ng-maxlength="50" required>
+					  		</div>
+					  		<div ng-show="signUpForm.$submitted">
+						        <span ng-show="signUpForm.firstName.$error.required" class="label label-danger">Name is mandatory</span>
+								<span ng-show="signUpForm.firstName.$error.maxlength" class="label label-danger">Maximum 50 characters</span>
+							</div>
+						  </div>
+						  <div class="col-sm-6">
+						  	<div class="input-group">
+						  		<span class="input-group-addon" id="basic-addon1"></span>
+						  		<input type="text" ng-model="user.lastName" class="form-control" placeholder="Last Name" name="lastName" aria-describedby="basic-addon1" ng-maxlength="50" required>
+						  	</div>
+						  	<div ng-show="signUpForm.$submitted">
+						  		<span ng-show="signUpForm.lastName.$error.required" class="label label-danger">Surname is mandatory</span>
+						  		<span ng-show="signUpForm.lastName.$error.maxlength" class="label label-danger">Maximum 50 characters</span>
+						  	</div>
+						  </div>
+						</div>
+						
+						<!-- Email -->
+						<div style="margin-bottom:5px;">
+					  		<h5><b>Email <span class="redLabel">*</span></b></h5>
+					  	</div>
+					  	<div class="input-group">
+						  <span class="input-group-addon" id="basic-addon1"></span>
+						  <input type="email" ng-model="user.username" class="form-control" placeholder="Email" name="username" aria-describedby="basic-addon1" ng-maxlength="100" required>
+						</div>
+						<div ng-show="signUpForm.$submitted" >
+					        <span ng-show="signUpForm.username.$error.required" class="label label-danger">Email is mandatory</span>
+					        <span ng-show="signUpForm.username.$error.email" class="label label-danger">Email format is wrong</span>
+							<span ng-show="signUpForm.username.$error.maxlength" class="label label-danger">Maximum 100 characters</span>
+						</div>
+						
+						<!-- Password -->
+						<div style="margin-bottom:5px;">
+							<h5><b>Password <span class="redLabel">*</span></b></h5>
+					  	</div>
+						<div class="input-group">
+						  <span class="input-group-addon" id="basic-addon1"></span>
+						  <input type="password" ng-model="user.password" class="form-control" placeholder="Password" aria-describedby="basic-addon1" name="password" ng-minlength="5" ng-maxlength="10" required>
+						</div>
+						<div ng-show="signUpForm.$submitted" >
+					        <span ng-show="signUpForm.password.$error.required" class="label label-danger">Password is mandatory</span>
+					        <span ng-show="signUpForm.password.$error.minlength" class="label label-danger">Password is too short. Min length is 5!</span>
+					        <span ng-show="signUpForm.password.$error.maxlength" class="label label-danger">Password is too long. Max length is 10!</span>
+						</div>
+						
+						<!-- Street -->
+						<div style="margin-bottom:5px;">
+							<h5><b>Street <span class="redLabel">*</span></b></h5>
+					  	</div>
+						<div class="input-group">
+							<span class="input-group-addon" id="basic-addon1"></span>
+							<input type="text" ng-model="user.address.street" class="form-control" placeholder="Street" name="street" aria-describedby="basic-addon1" required>
+						</div>
+						<div ng-show="signUpForm.$submitted" >
+					        <span ng-show="signUpForm.street.$error.required" class="label label-danger">Street is mandatory</span>
+					    </div>
+					    
+					    <!-- Zip Code -->
+						<div style="margin-bottom:5px;">
+							<h5><b>Zip Code <span class="redLabel">*</span></b></h5>
+					  	</div>
+						<div class="input-group">
+							<span class="input-group-addon" id="basic-addon1"></span>
+							<input type="text" ng-model="user.address.zipCode" class="form-control" placeholder="Zip Code" name="zipCode" aria-describedby="basic-addon1" required>
+						</div>
+						<div ng-show="signUpForm.$submitted" >
+					        <span ng-show="signUpForm.zipCode.$error.required" class="label label-danger">Zip Code is mandatory</span>
+					    </div>
+					    
+						<!-- Country -->
+						<div style="margin-bottom:5px;">
+							<h5><b>Country <span class="redLabel">*</span></b></h5>
+					  	</div>
+						<div class="input-group">
+							<span class="input-group-addon" id="basic-addon1"></span>
+						    <select class="form-control" ng-model="user.address.country" name="country" ng-init="getPRM('PRM_COUNTRY_LIST',true)" ng-options="country.value for country in PRM_COUNTRY_LIST" required></select>
+						</div>
+						<div ng-show="signUpForm.$submitted" >
+					        <span ng-show="signUpForm.country.$error.required" class="label label-danger">Country is mandatory</span>
+					    </div>
+					    
+					    <!-- City -->
+						<div style="margin-bottom:5px;">			  	
+					  		<h5><b>City <span class="redLabel">*</span></b></h5>
+					  	</div>
+					    <div class="input-group">
+					    	<span class="input-group-addon" id="basic-addon1"></span>
+						    <select class="form-control" name="city" ng-init="getPRM('PRM_CITY_LIST')"  ng-model="user.address.city" ng-options="city.value for city in PRM_CITY_LIST | filter:{filterKey:user.address.country.paramKey}" required></select>
+					    </div>
+					    <div ng-show="signUpForm.$submitted" >
+					        <span ng-show="signUpForm.city.$error.required" class="label label-danger">City is mandatory</span>
+					    </div>
+					    <!-- Date of Birth -->
+					    <div style="margin-bottom:5px;">
+					    	<h5><b>Date of Birth <span class="redLabel">*</span></b></h5>
+					  	</div>
+					  	<div class="input-group">
+					  		<input type="hidden" class="form-control" ng-model="user.date" id="selectedDate" name="birthdate" required/>
+					  	</div>
+						<div class="input-group date" id="datepicker" >
+							<div class="input-group-addon"></div>
+							<input type="text" class="form-control" data-provide="datepicker" readonly>
+						</div>
+						<div ng-show="signUpForm.$submitted" >
+							<span ng-show="signUpForm.birthdate.$error.required" class="label label-danger">Date of birth is mandatory</span>
+						</div>
+						<br>
+						<div class="row">
+					  	  <div class="col-sm-6">
+							<div ng-show="isLoading" class='uil-ring-css pull-right'></div>
+						  </div>
+						  <div class="col-sm-6">
+							<button type="submit" ng-click="signUp(signUpForm,user)" class="btn btn-default pull-right">Sign Up</button>
+						  </div>
+						</div>
+					</fieldset>
+				</form>
+			  </div>
+			</div>
+			<div class="panel panel-default" ng-if="!signIn">
+			  <div class="panel-heading">Do you have an account?</div>
+			  <div class="panel-body">
+			    <button type="button" ng-click="openCloseSignIn(true)" class="btn btn-default pull-right">Sign In</button>
+			  </div>
+			</div>
+		</div>
+	</body>
+</html>

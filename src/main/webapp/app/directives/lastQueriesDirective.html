@@ -1,0 +1,43 @@
+<div style="height: 100%;">
+	<div style="height: 24px; width: 100%; text-align: left;">
+		<div style="display: table-cell; width: 100%;">
+			<b>Last 10 Queries</b>
+		</div>
+		<div style="display: table-cell;">
+			<div class="input-group"
+				style="height: 20px; width: 20px; padding: 0;">
+				<div class="input-group-btn">
+					<button
+						style="height: 20px; width: 20px; padding: 0; background: none; border: none;">
+						<span style="font-size: 10px; margin: 0; padding: 0;"
+							class="glyphicon glyphicon-wrench"></span>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div
+		style="height: 300px; margin-top: -20px; padding-top: 20px; overflow: hidden;">
+		<div
+			style="padding-top: 8px; height: 100%; overflow: auto; width: 100%; overflow-x: hidden;">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th style="font-weight: normal;">Base Currency</th>
+						<th style="font-weight: normal;">Quote Currency</th>
+						<th style="font-weight: normal;">Rate</th>
+						<th style="font-weight: normal;">Date</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="row in queries">
+						<td>{{row.baseCurrency}}</td>
+						<td>{{row.quoteCurrency}}</td>
+						<td>{{row.rate}}</td>
+						<td>{{row.date | date:'dd.MM.yyyy' }}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
