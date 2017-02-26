@@ -1,11 +1,9 @@
 package com.orcunguducu.dynamic.service;
 
 import java.net.URISyntaxException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.http.client.utils.URIBuilder;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,12 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
 import com.orcunguducu.dynamic.domain.ParameterValue;
 import com.orcunguducu.dynamic.domain.QueryResult;
 import com.orcunguducu.dynamic.domain.User;
 import com.orcunguducu.dynamic.domain.UserQueryResult;
+import com.orcunguducu.dynamic.operation.CurrencyOperation;
 import com.orcunguducu.dynamic.repository.QueryRepository;
 import com.orcunguducu.dynamic.util.Constants;
 
@@ -39,10 +37,14 @@ public class QueryServiceImp implements QueryService{
 	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private CurrencyOperation currencyOperation;
 
 	@Transactional(rollbackFor=Exception.class)
 	@Override
 	public QueryResult getHistoricalQueryResult(QueryResult queryResult) throws URISyntaxException {
+		
 		//Get logged in user
 		User currentUser = userService.getLoggedInUser();
 		
@@ -58,28 +60,11 @@ public class QueryServiceImp implements QueryService{
 			return historicalQueryResult;
 		}
 		
-		//Preparing URL
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        
-		URIBuilder b = new URIBuilder(Constants.CURRENCY_WEB_SERVICE_URL+"historical?");
-        b.addParameter("access_key", Constants.ACCESS_KEY);
-        b.addParameter("date", dateFormat.format(queryResult.getDate()));
-        b.addParameter("currencies", queryResult.getQuoteCurrency());
-        
-        String url = b.build().toString();
-        LOG.info("Currency API URL:"+url);
-        
-        //Request for historical currency api
-        RestTemplate restTemplate = new RestTemplate();
-        String result = restTemplate.getForObject(url, String.class);
-		
-        String currencyQuote = queryResult.getBaseCurrency()+queryResult.getQuoteCurrency();
-        final JSONObject obj = new JSONObject(result);
-        LOG.info("Currency API Response:"+obj.toString());
-        final JSONObject quotes = obj.getJSONObject("quotes");
-        
+        final JSONObject quotes = currencyOperation.getHistoricalCurrency(
+        		queryResult.getDate(),queryResult.getQuoteCurrency());
         
         //Saving query to database
+        String currencyQuote = queryResult.getBaseCurrency()+queryResult.getQuoteCurrency();
         queryResult.setRate(quotes.getDouble(currencyQuote));
         queryRepository.save(queryResult);
         
@@ -104,19 +89,7 @@ public class QueryServiceImp implements QueryService{
         StringBuilder sb = new StringBuilder();
         parameterValues.stream().forEach(item->sb.append(item.getValue()+","));
         
-		//Preparing URL       
-		URIBuilder b = new URIBuilder(Constants.CURRENCY_WEB_SERVICE_URL+"live?");
-        b.addParameter("access_key", Constants.ACCESS_KEY);
-        b.addParameter("currencies", sb.toString());
-        
-        String url = b.build().toString();
-        url=url.replace("%2C", ",");
-        
-        //Request for historical currency api
-        RestTemplate restTemplate = new RestTemplate();
-        String result = restTemplate.getForObject(url, String.class);
-        final JSONObject obj = new JSONObject(result);
-        final JSONObject quotes = obj.getJSONObject("quotes");
+        final JSONObject quotes = currencyOperation.getLiveCurrency();
 
         List<QueryResult> queryResults = new ArrayList<>();
         for(ParameterValue parameterValue:parameterValues) {
