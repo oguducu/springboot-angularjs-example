@@ -1,5 +1,5 @@
 # DynamicUserPage : MyFin
-[![Build Status](https://travis-ci.org/oguducu/DynamicUserPage.svg?branch=master)](https://travis-ci.org/oguducu/DynamicUserPage)
+[![Build Status](https://travis-ci.org/oguducu/springboot-angularjs-example.svg?branch=master)](https://travis-ci.org/oguducu/springboot-angularjs-example)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/f63d6a65a7ed4514a630cadf8f38e7a0)](https://www.codacy.com/app/oguducu/DynamicUserPage?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=oguducu/DynamicUserPage&amp;utm_campaign=Badge_Grade)
 
 MyFin is a Spring Boot project. 
